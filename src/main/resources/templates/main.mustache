@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Main</title>
+    <style>
+        body {
+            background-color: #92a8d1;
+        }
+
+        #letters{
+            outline: red solid;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+    </form>
+</div>
+<div>
+    <form method="post" action="/main">
+        <input type="text" name="email" placeholder="Кому">
+        <input type="text" name="subject" placeholder="Тема">
+        <input type="text" name="text" placeholder="Текст">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+<div>Letters List</div>
+<form method="post" action="filter">
+    <input type="text" name="filter">
+    <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+    <button type="submit">Apply Filter</button>
+</form>
+{{#letters}}
+    <div id="letters">
+        <b>{{id}}   {{subject}}</b>
+        <span>{{text}}</span>
+        <strong>{{authorName}}</strong>
+    </div>
+{{/letters}}
+</body>
+</html>
