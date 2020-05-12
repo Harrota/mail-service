@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,18 +30,16 @@ public class MainController {
         return "greeting";
     }
 
-//    @GetMapping("/main")
-//    public String main(Map<String, Object> model) {
-//        Iterable<Letter> letters = letterRepo.findAll();
-//        model.put("letters", letters);
-//        return "main";
-//    }
-
-
     @GetMapping("/main")
-    public String main(@AuthenticationPrincipal User user, Map<String, Object> model) {
-            Iterable<Letter> letters = letterRepo.findByDestination(user);
-            model.put("letters", letters);
+    public String main(@RequestParam(required = false) String filter, @AuthenticationPrincipal User user, Model model) {
+        Iterable<Letter> letters;
+        if (filter != null && !filter.isEmpty()) {
+            letters = letterRepo.findBySubject(filter);
+        } else {
+            letters = letterRepo.findByDestination(user);
+        }
+        model.addAttribute("letters", letters);
+        model.addAttribute("filter", filter);
         return "main";
     }
 
@@ -60,15 +59,4 @@ public class MainController {
         return "main";
     }
 
-    @PostMapping("filter")
-    public String filter(@RequestParam String filter, Map<String, Object> model) {
-        Iterable<Letter> letters;
-        if (filter != null && !filter.isEmpty()) {
-            letters = letterRepo.findBySubject(filter);
-        } else {
-            letters = letterRepo.findAll();
-        }
-        model.put("letters", letters);
-        return "main";
-    }
 }
