@@ -3,18 +3,23 @@ package com.harrota.controller;
 import com.harrota.model.Role;
 import com.harrota.model.User;
 import com.harrota.repos.UserRepo;
+import com.harrota.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 
 @Controller
 public class RegistrationController {
     @Autowired
-    private UserRepo userRepo;
+    private UserService userService;
+
 
     @GetMapping("/registration")
     public String registration() {
@@ -23,22 +28,20 @@ public class RegistrationController {
 
 
     @PostMapping("/registration")
-    public String addUser(User user, Map<String, Object> model) {
-        User userFromDb = userRepo.findByUsername(user.getUsername());
-        User userFromDbByEmail = userRepo.findByEmail(user.getEmail());
-        if (userFromDbByEmail != null) {
-            model.put("message", "Email is taken!");
+    public String addUser(@Valid User user, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+
+            model.mergeAttributes(errors);
+
             return "registration";
         }
 
-        if (userFromDb != null) {
-            model.put("message", "User with this username already exists!");
+        if (!userService.addUser(user)) {
+            model.addAttribute("usernameError", "User exists!");
             return "registration";
         }
-
-        user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
-        userRepo.save(user);
 
         return "redirect:/login";
     }

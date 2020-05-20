@@ -7,6 +7,7 @@
             Send email
         </button>
     </div>
+
     <div class="mt-5">
         <form method="post" action="/main" class="collapse" id="collapseExample">
             <input type="text" name="email" placeholder="To">
