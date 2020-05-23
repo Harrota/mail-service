@@ -12,7 +12,7 @@ import java.util.Set;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
 
     private String email;
 
@@ -28,10 +28,6 @@ public class User implements UserDetails {
     Set<Role> roles;
 
     public User() {
-    }
-
-    public int getId() {
-        return id;
     }
 
     @Override
@@ -63,8 +59,12 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getEmail() {
